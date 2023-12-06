@@ -1,6 +1,5 @@
 import {LinkI} from "../interfaces/link";
 import {Link} from "../entities/link";
-import {ErrConflict} from "../entities/error";
 
 export class LinkRepo implements LinkI {
     private readonly ds: Link[];
