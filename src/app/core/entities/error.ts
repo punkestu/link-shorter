@@ -1,25 +1,39 @@
 import HttpStatus from "http-status-codes";
 
 export class Err extends Error {
-    field: string;
     code: number;
-    msg: string;
-    constructor(field: string, message: string, code: number) {
-        super(`${field} is ${message}`);
-        this.msg = message;
-        this.field = field;
+    error: string;
+
+    constructor(error: string, code: number) {
+        super(error);
         this.code = code;
+        this.error = error;
+    }
+}
+
+export interface ErrFields {
+    [field: string]: string[]
+}
+
+export class Errs extends Error {
+    errors: ErrFields;
+    code: number;
+
+    constructor(code: number, errors: ErrFields) {
+        super();
+        this.code = code;
+        this.errors = errors;
     }
 }
 
 export class ErrConflict extends Err {
-    constructor(field: string) {
-        super(field, "conflict", HttpStatus.CONFLICT);
+    constructor(cause: string) {
+        super(`conflict because ${cause}`, HttpStatus.CONFLICT);
     }
 }
 
 export class ErrNotFound extends Err {
-    constructor(field: string) {
-        super(field, "not found", HttpStatus.NOT_FOUND);
+    constructor(cause: string) {
+        super(`not found because ${cause}`, HttpStatus.NOT_FOUND);
     }
 }

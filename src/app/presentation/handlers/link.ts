@@ -1,6 +1,7 @@
 import {Request, Response} from "express";
 import {LinkUseCase} from "../../usecases/link";
-import {Err} from "../../core/entities/error";
+import {Err, Errs} from "../../core/entities/error";
+import HttpStatus from "http-status-codes";
 
 export class LinkController {
     private usecase: LinkUseCase;
@@ -15,11 +16,11 @@ export class LinkController {
             await this.usecase.createLink(link);
             res.status(201).json(link);
         } catch (err) {
-            if (err instanceof Err) {
+            if (err instanceof Err || err instanceof Errs) {
                 res.status(err.code).json(err);
                 return;
             }
-            res.sendStatus(500);
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(err);
         }
     }
     getMany = async (_: Request, res: Response): Promise<void> => {
@@ -27,11 +28,7 @@ export class LinkController {
             const link = await this.usecase.getMany();
             res.json(link);
         } catch (err) {
-            if (err instanceof Err) {
-                res.status(err.code).json(err);
-                return;
-            }
-            res.sendStatus(500);
+            res.sendStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

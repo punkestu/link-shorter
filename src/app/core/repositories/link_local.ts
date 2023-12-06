@@ -1,6 +1,6 @@
 import {LinkI} from "../interfaces/link";
 import {Link} from "../entities/link";
-import {ErrConflict, ErrNotFound} from "../entities/error";
+import {ErrConflict} from "../entities/error";
 
 export class LinkRepo implements LinkI {
     private readonly ds: Link[];
@@ -10,11 +10,8 @@ export class LinkRepo implements LinkI {
     }
 
     async getBySlug(slug: string): Promise<Link | null> {
-        let link: Link | undefined = this.ds.find(found_link => found_link.slug === slug);
-        if (!link) {
-            throw new ErrNotFound("slug");
-        }
-        return link;
+        let link = this.ds.find(found_link => found_link.slug === slug);
+        return !link ? null : link;
     }
 
     async getMany(): Promise<Link[]> {
@@ -22,10 +19,6 @@ export class LinkRepo implements LinkI {
     }
 
     async insert(link: Link): Promise<void> {
-        const found_link: Link | undefined = this.ds.find(found_link => found_link.slug === link.slug);
-        if (found_link) {
-            throw new ErrConflict("slug");
-        }
         this.ds.push(link);
     }
 }
